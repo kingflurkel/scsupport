@@ -7,8 +7,10 @@ var hashtagListAbi = require('./hashtagList.json');
 var web3;
 var hashtagListInstance;
 const level = require('level');
-var db;
+var db = level('./db');
 
+db.put('hashtagListStore', '{}');
+db.put('hashtagListTotal', 0);
 // Hi there, this is Swarm City Support. 
 // If you are human, press 1. 
 // If you are the Swarm City Front End, press 2.
@@ -45,11 +47,11 @@ web3WsProvider.on('connect', () => {
 
 async function blockUpdate (number) {
     console.log('Block: ', number);
+    //console.log(db);
     // also tell some website online i'm still alive
 };
 
 async function processHashtagEvent (r, tx) {
-    db = await level('./db');
     var metaData = await ipfs.cat(r.hashtagMetaIPFS);
     shelf = await db.get('hashtagListStore');
     var store = JSON.parse(shelf);
@@ -72,7 +74,8 @@ const io = require('socket.io')(server, {
 
 app.get('/', async function (req, res) {
     console.log("getHashtagList");
-    res.send(getHashtagList());
+    var result = await getHashtagList();
+    res.send(result);
 });
 
 // app.get('/', async function (req, res) {
@@ -88,14 +91,13 @@ io.on('connection', function (socket) {
 });
 
 async function getHashtagList () {
-    db = await level('./db');
     var shelf = await db.get('hashtagListStore');
     var store = JSON.parse(shelf);
+    //console.log(store);
     return store;
 };
 
 async function getHashtagItems (address) {
-    db = await level('./db');
     var shelf = await db.get('hashtag-'+address);
     var store = JSON.parse(shelf);
     return store;
