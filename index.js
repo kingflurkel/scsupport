@@ -24,7 +24,13 @@ const io = require('socket.io')(server, {
 });
 
 app.get('/hastagList', async function (req, res) {
+    console.log("getHashtagList");
     res.send(await getHashtagList());
+});
+
+app.get('/', async function (req, res) {
+    console.log("hi!");
+    res.send("Hi there!");
 });
 
 io.on('connection', function (socket) {
