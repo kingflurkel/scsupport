@@ -12,7 +12,11 @@ const level = require('level');
 // We'll be serving it up on our websocket, fi: 'hashtagList', string hastagListAddress
 
 const server = require('http').createServer(app);
-server.listen(3000, "localhost");
+var port = process.env.PORT || 8080;
+
+server.listen(port, function() {
+    console.log('Our app is running on http://localhost:' + port);
+});
 
 const io = require('socket.io')(server, {
     path: '/api',
